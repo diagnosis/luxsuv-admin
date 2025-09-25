@@ -40,3 +40,4 @@ export function formatRelativeTime(dateString: string): string {
   } else {
     return date.toLocaleDateString('en-AU');
   }
+}
