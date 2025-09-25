@@ -1,27 +1,18 @@
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 import { api } from '../../lib/api';
 import { FiBell, FiClock, FiCheck, FiX, FiEye } from 'react-icons/fi';
 import { BookingStatusBadge } from '../bookings/BookingStatusBadge';
 import { formatRelativeTime } from '../../lib/utils';
+import { notificationStore } from '../../lib/notificationStore';
 
 interface NotificationDropdownProps {
   onClose: () => void;
 }
 
-interface Notification {
-  id: string;
-  type: 'new_booking' | 'status_change';
-  bookingId: string;
-  booking: any;
-  read: boolean;
-  created_at: string;
-}
-
 export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const queryClient = useQueryClient();
 
   // Get recent bookings to create notifications
   const { data: bookingsData } = useQuery({
@@ -33,40 +24,31 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
   // Create notifications from bookings data
   useEffect(() => {
     if (bookingsData?.bookings) {
-      const now = new Date();
-      const recentBookings = bookingsData.bookings.filter((booking: any) => {
-        const bookingDate = new Date(booking.created_at);
-        const hoursDiff = (now.getTime() - bookingDate.getTime()) / (1000 * 60 * 60);
-        return hoursDiff <= 24; // Show bookings from last 24 hours
-      });
-
-      const newNotifications: Notification[] = recentBookings.map((booking: any) => ({
-        id: `booking-${booking.id}`,
-        type: 'new_booking' as const,
-        bookingId: booking.id,
-        booking,
-        read: false,
-        created_at: booking.created_at,
-      }));
-
+      const newNotifications = notificationStore.createNotificationsFromBookings(bookingsData.bookings);
       setNotifications(newNotifications.slice(0, 10)); // Limit to 10 notifications
     }
+  }, [bookingsData]);
+
+  // Subscribe to notification store changes
+  useEffect(() => {
+    return notificationStore.subscribe(() => {
+      // Refresh notifications when store changes
+      if (bookingsData?.bookings) {
+        const updatedNotifications = notificationStore.createNotificationsFromBookings(bookingsData.bookings);
+        setNotifications(updatedNotifications.slice(0, 10));
+      }
+    });
   }, [bookingsData]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const markAsRead = (notificationId: string) => {
-    setNotifications(prev => 
-      prev.map(n => 
-        n.id === notificationId ? { ...n, read: true } : n
-      )
-    );
+    notificationStore.markAsRead(notificationId);
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(n => ({ ...n, read: true }))
-    );
+    const notificationIds = notifications.map(n => n.id);
+    notificationStore.markAllAsRead(notificationIds);
   };
 
   const handleNotificationClick = (notification: Notification) => {
