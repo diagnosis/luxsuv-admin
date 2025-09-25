@@ -1,4 +1,5 @@
 import { FiEdit2, FiTrash2, FiEye, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiCalendar } from 'react-icons/fi';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { formatDateTime } from '../../lib/utils';
 
