@@ -47,7 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await fetch('/api/v1/admin/login', {
+    const response = await fetch('http://localhost:8080/api/v1/admin/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

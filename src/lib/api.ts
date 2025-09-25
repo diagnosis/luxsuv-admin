@@ -7,7 +7,7 @@ export class ApiClient {
   private baseUrl: string;
   private token: string | null;
 
-  constructor(baseUrl = '/api/v1', token: string | null = null) {
+  constructor(baseUrl = 'http://localhost:8080/api/v1', token: string | null = null) {
     this.baseUrl = baseUrl;
     this.token = token || localStorage.getItem('adminToken');
   }
