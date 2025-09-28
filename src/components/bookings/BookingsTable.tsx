@@ -16,7 +16,8 @@ interface Booking {
   trip_type: 'per_ride' | 'hourly';
   status: 'pending' | 'approved' | 'completed' | 'cancelled';
   payment_status?: 'pending' | 'validated' | 'paid' | 'failed';
-  amount_cents?: number;
+  base_amount?: number;
+  service_fee?: number;
   paid_at?: string;
   created_at: string;
 }
@@ -55,6 +56,25 @@ export function BookingsTable({
   const formatAmount = (amountCents?: number) => {
     if (!amountCents) return 'N/A';
     return `$${(amountCents / 100).toFixed(2)}`;
+  };
+
+  const formatAmountBreakdown = (booking: Booking) => {
+    const baseAmount = booking.base_amount || 0;
+    const serviceFee = booking.service_fee || 0;
+    const total = baseAmount + serviceFee;
+    
+    if (total === 0) return 'N/A';
+    
+    return (
+      <div>
+        <div className="font-medium">${(total / 100).toFixed(2)}</div>
+        {(baseAmount > 0 || serviceFee > 0) && (
+          <div className="text-xs text-gray-500">
+            Base: ${(baseAmount / 100).toFixed(2)} + Fee: ${(serviceFee / 100).toFixed(2)}
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -155,7 +175,7 @@ export function BookingsTable({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {formatAmount(booking.amount_cents)}
+                  {formatAmountBreakdown(booking)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {booking.passenger_count}
@@ -232,7 +252,14 @@ export function BookingsTable({
                 {formatDateTime(booking.scheduled_at)} • {booking.passenger_count} passengers • {booking.luggage_count} bags
               </div>
               <div className="text-xs text-gray-600">
-                Amount: {formatAmount(booking.amount_cents)}
+                Total: {booking.base_amount || booking.service_fee 
+                  ? `$${(((booking.base_amount || 0) + (booking.service_fee || 0)) / 100).toFixed(2)}`
+                  : 'N/A'
+                } {(booking.base_amount && booking.service_fee) && (
+                  <span className="text-gray-400">
+                    (Base: ${(booking.base_amount / 100).toFixed(2)}, Fee: ${(booking.service_fee / 100).toFixed(2)})
+                  </span>
+                )}
               </div>
             </div>
 

@@ -21,6 +21,8 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
     passenger_count: booking.passenger_count || 1,
     trip_type: booking.trip_type || 'per_ride',
     status: booking.status || 'pending',
+    base_amount: booking.base_amount ? (booking.base_amount / 100).toFixed(2) : '',
+    service_fee: booking.service_fee ? (booking.service_fee / 100).toFixed(2) : '',
   });
 
   const queryClient = useQueryClient();
@@ -50,6 +52,8 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
       scheduled_at: new Date(formData.scheduled_at).toISOString(),
       luggage_count: Number(formData.luggage_count),
       passenger_count: Number(formData.passenger_count),
+      base_amount: formData.base_amount ? Math.round(parseFloat(formData.base_amount) * 100) : 0,
+      service_fee: formData.service_fee ? Math.round(parseFloat(formData.service_fee) * 100) : 0,
     };
 
     updateMutation.mutate(submitData);
@@ -294,6 +298,56 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
             </select>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="base_amount" className="block text-sm font-medium text-gray-700 mb-1">
+                Base Amount ($)
+              </label>
+              <input
+                type="number"
+                id="base_amount"
+                name="base_amount"
+                min="0"
+                step="0.01"
+                value={formData.base_amount || ''}
+                onChange={handleChange}
+                disabled={timeRestricted}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="service_fee" className="block text-sm font-medium text-gray-700 mb-1">
+                Service Fee ($)
+              </label>
+              <input
+                type="number"
+                id="service_fee"
+                name="service_fee"
+                min="0"
+                step="0.01"
+                value={formData.service_fee || ''}
+                onChange={handleChange}
+                disabled={timeRestricted}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Total Amount Display */}
+          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-blue-900">Total Amount:</span>
+              <span className="text-lg font-bold text-blue-900">
+                ${((parseFloat(formData.base_amount) || 0) + (parseFloat(formData.service_fee) || 0)).toFixed(2)}
+              </span>
+            </div>
+            <div className="text-xs text-blue-600 mt-1">
+              Base: ${(parseFloat(formData.base_amount) || 0).toFixed(2)} + Service Fee: ${(parseFloat(formData.service_fee) || 0).toFixed(2)}
+            </div>
+          </div>
           <div className="flex justify-end space-x-3 pt-4">
             <button
               type="button"

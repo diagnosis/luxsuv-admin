@@ -35,7 +35,7 @@ export function StatsCards({ bookings }: StatsCardsProps) {
       name: 'Total Revenue',
       value: `$${(bookings
         .filter(b => b.payment_status === 'paid')
-        .reduce((sum, b) => sum + (b.amount_cents || 0), 0) / 100).toFixed(2)}`,
+        .reduce((sum, b) => sum + ((b.base_amount || 0) + (b.service_fee || 0)), 0) / 100).toFixed(2)}`,
       icon: FiCheck,
       color: 'green',
       change: '+15%',

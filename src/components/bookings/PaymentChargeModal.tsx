@@ -11,14 +11,25 @@ interface PaymentChargeModalProps {
 }
 
 export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChargeModalProps) {
-  const [amount, setAmount] = useState('');
+  const [baseAmount, setBaseAmount] = useState('');
+  const [serviceFee, setServiceFee] = useState('');
   const [notes, setNotes] = useState('');
   const [chargeResult, setChargeResult] = useState<any>(null);
 
   const queryClient = useQueryClient();
 
+  // Initialize amounts from booking data
+  useEffect(() => {
+    if (booking.base_amount) {
+      setBaseAmount((booking.base_amount / 100).toFixed(2));
+    }
+    if (booking.service_fee) {
+      setServiceFee((booking.service_fee / 100).toFixed(2));
+    }
+  }, [booking]);
+
   const chargeMutation = useMutation({
-    mutationFn: (chargeData: { amount: number; currency?: string; notes?: string }) => 
+    mutationFn: (chargeData: { amount: number; base_amount?: number; service_fee?: number; currency?: string; notes?: string }) => 
       api.chargeCustomer(booking.id, chargeData),
     onSuccess: (result) => {
       if (result.requires_action) {
@@ -38,19 +49,26 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
   });
 
   const handleCharge = () => {
-    const chargeAmount = parseFloat(amount);
+    const baseAmountValue = parseFloat(baseAmount) || 0;
+    const serviceFeeValue = parseFloat(serviceFee) || 0;
+    const chargeAmount = baseAmountValue + serviceFeeValue;
+    
     if (isNaN(chargeAmount) || chargeAmount <= 0) {
       return;
     }
 
     chargeMutation.mutate({
       amount: chargeAmount,
+      base_amount: baseAmountValue,
+      service_fee: serviceFeeValue,
       currency: 'usd',
       notes: notes,
     });
   };
 
-  const chargeAmount = parseFloat(amount) || 0;
+  const baseAmountValue = parseFloat(baseAmount) || 0;
+  const serviceFeeValue = parseFloat(serviceFee) || 0;
+  const totalAmount = baseAmountValue + serviceFeeValue;
 
   // Success state
   if (chargeResult && chargeResult.status === 'succeeded') {
@@ -151,6 +169,15 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
                     {booking.trip_type === 'hourly' ? 'Hourly Service' : 'Per Ride'}
                   </p>
                 </div>
+                <div>
+                  <span className="text-sm text-gray-600">Current Total:</span>
+                  <p className="font-medium text-green-600">
+                    {booking.base_amount || booking.service_fee 
+                      ? `$${(((booking.base_amount || 0) + (booking.service_fee || 0)) / 100).toFixed(2)}`
+                      : 'Not set'
+                    }
+                  </p>
+                </div>
               </div>
               
               <div>
@@ -169,27 +196,69 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
           {/* Payment Amount */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">💰 Payment Amount</h3>
-            <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-                Enter Charge Amount
-              </label>
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl text-gray-500 font-semibold">$</span>
-                <input
-                  type="number"
-                  id="amount"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-2xl font-semibold focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  autoFocus
-                />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="baseAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                  Base Amount
+                </label>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl text-gray-500 font-semibold">$</span>
+                  <input
+                    type="number"
+                    id="baseAmount"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={baseAmount}
+                    onChange={(e) => setBaseAmount(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-lg font-semibold focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Base ride cost
+                </p>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Enter the amount to charge the customer for this ride
-              </p>
+
+              <div>
+                <label htmlFor="serviceFee" className="block text-sm font-medium text-gray-700 mb-2">
+                  Service Fee
+                </label>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl text-gray-500 font-semibold">$</span>
+                  <input
+                    type="number"
+                    id="serviceFee"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={serviceFee}
+                    onChange={(e) => setServiceFee(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-lg font-semibold focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Additional service charges
+                </p>
+              </div>
+            </div>
+
+            {/* Total Display */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-green-800">Total Amount:</span>
+                <span className="text-2xl font-bold text-green-900">${totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="text-xs text-green-700 space-y-1">
+                <div className="flex justify-between">
+                  <span>Base Amount:</span>
+                  <span>${baseAmountValue.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Service Fee:</span>
+                  <span>${serviceFeeValue.toFixed(2)}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -215,8 +284,18 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
             <h4 className="font-semibold text-blue-900 mb-3">💡 Payment Summary</h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-blue-800">Amount to charge:</span>
-                <span className="font-bold text-blue-900 text-lg">${chargeAmount.toFixed(2)}</span>
+                <span className="text-blue-800">Total amount to charge:</span>
+                <span className="font-bold text-blue-900 text-lg">${totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="text-sm text-blue-700 pl-4 space-y-1">
+                <div className="flex justify-between">
+                  <span>• Base amount:</span>
+                  <span>${baseAmountValue.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>• Service fee:</span>
+                  <span>${serviceFeeValue.toFixed(2)}</span>
+                </div>
               </div>
               <div className="text-xs text-blue-600 space-y-1">
                 <p>• Customer's card will be charged immediately</p>
@@ -252,7 +331,7 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
             </button>
             <button
               onClick={handleCharge}
-              disabled={chargeMutation.isPending || chargeAmount <= 0}
+              disabled={chargeMutation.isPending || totalAmount <= 0}
               className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium flex items-center justify-center transition-colors"
             >
               {chargeMutation.isPending ? (
@@ -261,7 +340,7 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
                   Processing...
                 </>
               ) : (
-                `💳 Charge $${chargeAmount.toFixed(2)}`
+                `💳 Charge $${totalAmount.toFixed(2)}`
               )}
             </button>
           </div>
