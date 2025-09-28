@@ -7,6 +7,7 @@ import { BookingsTable } from './BookingsTable';
 import { BookingsFilters } from './BookingsFilters';
 import { BookingModal } from './BookingModal';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
+import { PaymentChargeModal } from './PaymentChargeModal';
 
 export function BookingsPage() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export function BookingsPage() {
   
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showChargeModal, setShowChargeModal] = useState(false);
   const [deleteBooking, setDeleteBooking] = useState<{ id: string; name: string } | null>(null);
   const [deleteType, setDeleteType] = useState<'soft' | 'hard'>('soft');
 
@@ -54,6 +56,10 @@ export function BookingsPage() {
     setDeleteType(type);
   };
 
+  const handleChargeCustomer = (booking: any) => {
+    setSelectedBooking(booking);
+    setShowChargeModal(true);
+  };
   const confirmDelete = async () => {
     if (!deleteBooking) return;
 
@@ -99,6 +105,7 @@ export function BookingsPage() {
           onPageChange={handlePageChange}
           onEdit={handleEditBooking}
           onDelete={handleDeleteBooking}
+          onChargeCustomer={handleChargeCustomer}
         />
 
         {showModal && (
@@ -111,6 +118,20 @@ export function BookingsPage() {
             onSuccess={() => {
               queryClient.invalidateQueries({ queryKey: ['bookings'] });
               setShowModal(false);
+              setSelectedBooking(null);
+            }}
+          />
+        )}
+
+        {showChargeModal && selectedBooking && (
+          <PaymentChargeModal
+            booking={selectedBooking}
+            onClose={() => {
+              setShowChargeModal(false);
+              setSelectedBooking(null);
+            }}
+            onComplete={() => {
+              setShowChargeModal(false);
               setSelectedBooking(null);
             }}
           />

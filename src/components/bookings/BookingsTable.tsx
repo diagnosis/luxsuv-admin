@@ -15,6 +15,9 @@ interface Booking {
   passenger_count: number;
   trip_type: 'per_ride' | 'hourly';
   status: 'pending' | 'approved' | 'completed' | 'cancelled';
+  payment_status?: 'pending' | 'validated' | 'paid' | 'failed';
+  amount_cents?: number;
+  paid_at?: string;
   created_at: string;
 }
 
@@ -31,6 +34,7 @@ interface BookingsTableProps {
   onPageChange: (page: number) => void;
   onEdit: (booking: Booking) => void;
   onDelete: (booking: Booking, type: 'soft' | 'hard') => void;
+  onChargeCustomer?: (booking: Booking) => void;
 }
 
 export function BookingsTable({ 
@@ -40,8 +44,19 @@ export function BookingsTable({
   pagination,
   onPageChange,
   onEdit,
-  onDelete
+  onDelete,
+  onChargeCustomer
 }: BookingsTableProps) {
+  const canCharge = (booking: Booking) => {
+    return booking.status === 'completed' && 
+           (booking.payment_status === 'validated' || booking.payment_status === 'pending');
+  };
+
+  const formatAmount = (amountCents?: number) => {
+    if (!amountCents) return 'N/A';
+    return `$${(amountCents / 100).toFixed(2)}`;
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -86,6 +101,12 @@ export function BookingsTable({
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Payment
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Amount
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Passengers
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -121,10 +142,40 @@ export function BookingsTable({
                   <BookingStatusBadge status={booking.status} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <div className="flex flex-col gap-1">
+                    <BookingStatusBadge 
+                      status={booking.payment_status || 'pending'} 
+                      type="payment"
+                    />
+                    {booking.paid_at && (
+                      <span className="text-xs text-gray-500">
+                        Paid: {formatDateTime(booking.paid_at)}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {formatAmount(booking.amount_cents)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {booking.passenger_count}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end space-x-2">
+                  <div className="flex justify-end space-x-1 flex-wrap gap-1">
+                    {canCharge(booking) && onChargeCustomer && (
+                      <button
+                        onClick={() => onChargeCustomer(booking)}
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                        title="Charge customer"
+                      >
+                        💳 Charge
+                      </button>
+                    )}
+                    {booking.payment_status === 'paid' && (
+                      <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium">
+                        ✅ Paid
+                      </span>
+                    )}
                     <button
                       onClick={() => onEdit(booking)}
                       className="text-purple-600 hover:text-purple-900 p-1 rounded hover:bg-purple-50 transition-colors"
@@ -163,7 +214,13 @@ export function BookingsTable({
                 <h3 className="font-medium text-gray-900">{booking.name}</h3>
                 <p className="text-sm text-gray-600">{booking.email}</p>
               </div>
-              <BookingStatusBadge status={booking.status} />
+              <div className="flex flex-col gap-1">
+                <BookingStatusBadge status={booking.status} />
+                <BookingStatusBadge 
+                  status={booking.payment_status || 'pending'} 
+                  type="payment"
+                />
+              </div>
             </div>
             
             <div className="space-y-2 mb-3">
@@ -174,9 +231,25 @@ export function BookingsTable({
               <div className="text-xs text-gray-500">
                 {formatDateTime(booking.scheduled_at)} • {booking.passenger_count} passengers • {booking.luggage_count} bags
               </div>
+              <div className="text-xs text-gray-600">
+                Amount: {formatAmount(booking.amount_cents)}
+              </div>
             </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end space-x-1 flex-wrap gap-1">
+              {canCharge(booking) && onChargeCustomer && (
+                <button
+                  onClick={() => onChargeCustomer(booking)}
+                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                >
+                  💳 Charge
+                </button>
+              )}
+              {booking.payment_status === 'paid' && (
+                <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium">
+                  ✅ Paid
+                </span>
+              )}
               <button
                 onClick={() => onEdit(booking)}
                 className="text-purple-600 hover:text-purple-900 p-2 rounded hover:bg-purple-50 transition-colors"

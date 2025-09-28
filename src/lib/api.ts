@@ -89,6 +89,18 @@ export class ApiClient {
     });
   }
 
+  // Payment methods
+  async chargeCustomer(id: string, chargeData: {
+    amount: number;
+    currency?: string;
+    notes?: string;
+  }) {
+    return this.request(`/admin/bookings/${id}/charge`, {
+      method: 'POST',
+      body: JSON.stringify(chargeData),
+    });
+  }
+
   // Email methods
   async getEmails() {
     return this.request('/dev/outbox');
