@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { FiX, FiSave } from 'react-icons/fi';
+import { BookingStatusBadge } from './BookingStatusBadge';
 
 interface BookingModalProps {
   booking: any;
