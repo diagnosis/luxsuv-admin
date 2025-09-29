@@ -45,7 +45,7 @@ export function StatsCards({ bookings }: StatsCardsProps) {
       name: 'Pending Payments',
       value: bookings.filter(b => 
         b.status === 'completed' && 
-        (b.payment_status === 'validated' || b.payment_status === 'pending')
+        b.payment_status === 'validated'
       ).length,
       icon: FiClock,
       color: 'amber',

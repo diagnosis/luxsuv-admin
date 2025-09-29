@@ -50,7 +50,7 @@ export function BookingsTable({
 }: BookingsTableProps) {
   const canCharge = (booking: Booking) => {
     return booking.status === 'completed' && 
-           booking.payment_status === 'validated';
+           (booking.payment_status === 'validated' || booking.payment_status === 'pending');
   };
 
   const formatAmount = (amountCents?: number) => {
@@ -121,7 +121,7 @@ export function BookingsTable({
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment
+                Payment Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Amount
@@ -167,6 +167,11 @@ export function BookingsTable({
                       status={booking.payment_status || 'pending'} 
                       type="payment"
                     />
+                    {booking.payment_status === 'validated' && (
+                      <span className="text-xs text-blue-600 font-medium">
+                        💳 Card Validated - Ready to Charge
+                      </span>
+                    )}
                     {booking.paid_at && (
                       <span className="text-xs text-gray-500">
                         Paid: {formatDateTime(booking.paid_at)}
@@ -185,14 +190,14 @@ export function BookingsTable({
                     {canCharge(booking) && onChargeCustomer && (
                       <button
                         onClick={() => onChargeCustomer(booking)}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors animate-pulse"
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm"
                         title="Charge customer"
                       >
-                        💳 Charge Now
+                        💳 Charge Customer
                       </button>
                     )}
                     {booking.payment_status === 'paid' && (
-                      <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium">
+                      <span className="inline-flex items-center px-3 py-2 text-sm text-green-600 font-medium bg-green-50 rounded-lg">
                         ✅ Payment Complete
                       </span>
                     )}
@@ -234,13 +239,6 @@ export function BookingsTable({
                 <h3 className="font-medium text-gray-900">{booking.name}</h3>
                 <p className="text-sm text-gray-600">{booking.email}</p>
               </div>
-              <div className="flex flex-col gap-1">
-                <BookingStatusBadge status={booking.status} />
-                <BookingStatusBadge 
-                  status={booking.payment_status || 'pending'} 
-                  type="payment"
-                />
-              </div>
             </div>
             
             <div className="space-y-2 mb-3">
@@ -248,6 +246,18 @@ export function BookingsTable({
                 <div className="font-medium text-gray-900">{booking.pickup}</div>
                 <div className="text-gray-500">↓ {booking.dropoff}</div>
               </div>
+              <div className="flex items-center gap-2">
+                <BookingStatusBadge status={booking.status} />
+                <BookingStatusBadge 
+                  status={booking.payment_status || 'pending'} 
+                  type="payment"
+                />
+              </div>
+              {booking.payment_status === 'validated' && (
+                <div className="text-xs text-blue-600 font-medium">
+                  💳 Card Validated - Ready to Charge After Completion
+                </div>
+              )}
               <div className="text-xs text-gray-500">
                 {formatDateTime(booking.scheduled_at)} • {booking.passenger_count} passengers • {booking.luggage_count} bags
               </div>
@@ -267,13 +277,13 @@ export function BookingsTable({
               {canCharge(booking) && onChargeCustomer && (
                 <button
                   onClick={() => onChargeCustomer(booking)}
-                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm"
                 >
-                  💳 Charge
+                  💳 Charge Customer
                 </button>
               )}
               {booking.payment_status === 'paid' && (
-                <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium">
+                <span className="inline-flex items-center px-3 py-2 text-sm text-green-600 font-medium bg-green-50 rounded-lg">
                   ✅ Paid
                 </span>
               )}

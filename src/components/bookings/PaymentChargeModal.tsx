@@ -50,9 +50,16 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
 
   const handleCharge = () => {
     const baseAmountValue = parseFloat(baseAmount) || 0;
-    const serviceFeeValue = parseFloat(serviceFee) || 0;
-    const chargeAmount = baseAmountValue + serviceFeeValue;
+     mutationFn: (chargeData: { total_amount: number; base_amount?: number; service_fee?: number; currency?: string; notes?: string }) => 
+       api.chargeCustomer(booking.id, chargeData),
     
+       // Show success toast
+       toaster.toast({
+         type: 'success',
+         title: 'Payment Successful!',
+         description: `Customer charged $${(result.amount / 100).toFixed(2)}`,
+       });
+       
     if (isNaN(chargeAmount) || chargeAmount <= 0) {
       return;
     }
@@ -63,6 +70,14 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
       service_fee: serviceFeeValue,
       currency: 'usd',
       notes: notes,
+     onError: (error) => {
+       // Show error toast
+       toaster.toast({
+         type: 'error',
+         title: 'Payment Failed',
+         description: error instanceof Error ? error.message : 'Unknown error occurred',
+       });
+     },
     });
   };
 
