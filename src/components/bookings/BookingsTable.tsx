@@ -50,7 +50,7 @@ export function BookingsTable({
 }: BookingsTableProps) {
   const canCharge = (booking: Booking) => {
     return booking.status === 'completed' && 
-           (booking.payment_status === 'validated' || booking.payment_status === 'pending');
+           (booking.payment_status === 'validated' || !booking.payment_status);
   };
 
   const formatAmount = (amountCents?: number) => {
@@ -164,34 +164,16 @@ export function BookingsTable({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {booking.payment_status === 'validated' ? (
-                    <div className="space-y-1">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                        Validated
-                      </span>
-                      <div className="text-xs text-blue-600 font-medium">
-                        💳 Card Ready to Charge
-                      </div>
-                    </div>
-                  ) : booking.payment_status === 'paid' ? (
-                    <div className="space-y-1">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                        Paid
-                      </span>
-                      {booking.paid_at && (
-                        <div className="text-xs text-gray-500">
-                          {formatDateTime(booking.paid_at)}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                      {booking.payment_status || 'Pending'}
-                    </span>
-                  )}
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    booking.payment_status === 'validated' ? 'bg-blue-100 text-blue-800' :
+                    booking.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {booking.payment_status || 'pending'}
+                  </span></td>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {formatAmountBreakdown(booking)}
+                  ${((booking.base_amount || 0) + (booking.service_fee || 0)) / 100 || 'N/A'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {booking.passenger_count}
@@ -201,14 +183,14 @@ export function BookingsTable({
                     {canCharge(booking) && onChargeCustomer && (
                       <button
                         onClick={() => onChargeCustomer(booking)}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                        className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700"
                       >
                         💳 Charge
                       </button>
                     )}
                     {booking.payment_status === 'paid' && (
-                      <span className="inline-flex items-center px-3 py-1.5 text-xs text-green-600 font-medium bg-green-50 rounded-md">
-                        ✅ Paid
+                      <span className="text-green-600 font-medium text-sm">
+                        ✅ Payment Complete
                       </span>
                     )}
                     <button
@@ -258,29 +240,16 @@ export function BookingsTable({
               </div>
               <div className="flex items-center gap-2">
                 <BookingStatusBadge status={booking.status} />
-                <BookingStatusBadge 
-                  status={booking.payment_status || 'pending'} 
-                  type="payment"
-                />
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  booking.payment_status === 'validated' ? 'bg-blue-100 text-blue-800' :
+                  booking.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {booking.payment_status || 'pending'}
+                </span>
               </div>
-              {booking.payment_status === 'validated' && (
-                <div className="text-xs text-blue-600 font-medium">
-                  💳 Card Validated - Ready to Charge After Completion
-                </div>
-              )}
               <div className="text-xs text-gray-500">
                 {formatDateTime(booking.scheduled_at)} • {booking.passenger_count} passengers • {booking.luggage_count} bags
-                  {booking.payment_status === 'validated' && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
-                      💳 Validated
-                    </span>
-                  )}
-                  {booking.payment_status === 'paid' && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                      ✅ Paid
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
 
@@ -288,14 +257,14 @@ export function BookingsTable({
               {canCharge(booking) && onChargeCustomer && (
                 <button
                   onClick={() => onChargeCustomer(booking)}
-                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                  className="bg-green-600 text-white px-3 py-1.5 text-xs font-medium rounded hover:bg-green-700"
                 >
                   💳 Charge
                 </button>
               )}
               {booking.payment_status === 'paid' && (
-                <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium bg-green-50 rounded-md">
-                  ✅
+                <span className="text-green-600 font-medium text-xs">
+                  ✅ Payment Complete
                 </span>
               )}
               <button

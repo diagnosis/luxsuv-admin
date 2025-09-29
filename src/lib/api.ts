@@ -91,9 +91,7 @@ export class ApiClient {
 
   // Payment methods
   async chargeCustomer(id: string, chargeData: {
-    total_amount: number;
-    base_amount?: number;
-    service_fee?: number;
+    amount: number;
     currency?: string;
     notes?: string;
   }) {
