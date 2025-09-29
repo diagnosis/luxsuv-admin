@@ -170,7 +170,7 @@ export function BookingsTable({
                     'bg-yellow-100 text-yellow-800'
                   }`}>
                     {booking.payment_status || 'pending'}
-                  </span></td>
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   ${((booking.base_amount || 0) + (booking.service_fee || 0)) / 100 || 'N/A'}
