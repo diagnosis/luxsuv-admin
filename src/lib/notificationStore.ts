@@ -1,6 +1,6 @@
 interface Notification {
   id: string;
-  type: 'new_booking' | 'status_change';
+  type: 'new_booking' | 'ready_to_charge' | 'status_change';
   bookingId: string;
   booking: any;
   read: boolean;
@@ -50,22 +50,29 @@ class NotificationStore {
 
   createNotificationsFromBookings(bookings: any[]): Notification[] {
     const now = new Date();
-    const recentBookings = bookings.filter((booking: any) => {
-      const bookingDate = new Date(booking.created_at);
-      const hoursDiff = (now.getTime() - bookingDate.getTime()) / (1000 * 60 * 60);
-      return hoursDiff <= 24; // Show bookings from last 24 hours
-    });
-
-    return recentBookings.map((booking: any) => {
+    
+    return bookings.map((booking: any) => {
       const id = `booking-${booking.id}`;
+      
+      // Determine notification type
+      let type: 'new_booking' | 'ready_to_charge' = 'new_booking';
+      if (booking.status === 'completed' && booking.payment_status === 'validated') {
+        type = 'ready_to_charge';
+      }
+      
       return {
         id,
-        type: 'new_booking' as const,
+        type,
         bookingId: booking.id,
         booking,
         read: this.isRead(id),
         created_at: booking.created_at,
       };
+    }).filter((notification: any) => {
+      // Only show recent notifications or urgent ones
+      const bookingDate = new Date(booking.created_at);
+      const hoursDiff = (now.getTime() - bookingDate.getTime()) / (1000 * 60 * 60);
+      return hoursDiff <= 24 || notification.type === 'ready_to_charge'; // Show recent or urgent
     });
   }
 

@@ -58,7 +58,7 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
     }
 
     chargeMutation.mutate({
-      amount: chargeAmount,
+      total_amount: chargeAmount,
       base_amount: baseAmountValue,
       service_fee: serviceFeeValue,
       currency: 'usd',
@@ -93,8 +93,10 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
                 Payment ID: {chargeResult.payment_intent_id}
               </p>
               <div className="space-y-1">
+                <p>💳 Using validated payment method</p>
                 <p>📧 Invoices sent to both rider and driver</p>
                 <p>💳 Payment completed successfully</p>
+                <p>🔒 Card charged securely via Stripe</p>
               </div>
             </div>
             
@@ -298,9 +300,11 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
                 </div>
               </div>
               <div className="text-xs text-blue-600 space-y-1">
+                <p>• Uses validated payment method from booking</p>
                 <p>• Customer's card will be charged immediately</p>
-                <p>• Both you and the customer will receive email invoices</p>
-                <p>• Payment cannot be undone once processed</p>
+                <p>• Both parties receive detailed email invoices</p>
+                <p>• Payment processing is secure via Stripe</p>
+                <p>• Action cannot be undone once processed</p>
               </div>
             </div>
           </div>

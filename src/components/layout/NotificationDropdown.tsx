@@ -169,11 +169,11 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
         <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
           <Link
             to="/bookings"
-            search={{ status: 'pending' }}
+            search={{ status: '' }}
             onClick={onClose}
             className="block text-center text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
           >
-            View all pending bookings
+            View all bookings
           </Link>
         </div>
       )}

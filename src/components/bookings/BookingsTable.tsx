@@ -50,7 +50,7 @@ export function BookingsTable({
 }: BookingsTableProps) {
   const canCharge = (booking: Booking) => {
     return booking.status === 'completed' && 
-           (booking.payment_status === 'validated' || booking.payment_status === 'pending');
+           booking.payment_status === 'validated';
   };
 
   const formatAmount = (amountCents?: number) => {
@@ -185,15 +185,15 @@ export function BookingsTable({
                     {canCharge(booking) && onChargeCustomer && (
                       <button
                         onClick={() => onChargeCustomer(booking)}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors animate-pulse"
                         title="Charge customer"
                       >
-                        💳 Charge
+                        💳 Charge Now
                       </button>
                     )}
                     {booking.payment_status === 'paid' && (
                       <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium">
-                        ✅ Paid
+                        ✅ Payment Complete
                       </span>
                     )}
                     <button

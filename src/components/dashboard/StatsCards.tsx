@@ -69,7 +69,7 @@ export function StatsCards({ bookings }: StatsCardsProps) {
         
         return (
           <div key={stat.name} className={`bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow ${
-            isUrgent ? 'border-red-300 animate-pulse' : 'border-gray-200'
+            isUrgent ? 'border-amber-300 ring-2 ring-amber-100' : 'border-gray-200'
           }`}>
             <div className="flex items-center justify-between">
               <div>
@@ -82,9 +82,9 @@ export function StatsCards({ bookings }: StatsCardsProps) {
             </div>
             <div className="mt-4 flex items-center text-sm">
               <span className={`font-medium ${
-                isUrgent ? 'text-red-600' : 'text-green-600'
+                isUrgent ? 'text-amber-600' : 'text-green-600'
               }`}>
-                {isUrgent ? '⚠️ Requires attention' : stat.change}
+                {isUrgent ? '💳 Ready to charge' : stat.change}
               </span>
               {!isUrgent && (
                 <span className="text-gray-600 ml-2">from last month</span>
