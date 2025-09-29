@@ -158,8 +158,10 @@ export function BookingsTable({
                     {formatDateTime(booking.scheduled_at)}
                   </div>
                 </td>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <BookingStatusBadge status={booking.status} />
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <BookingStatusBadge status={booking.status} />
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {booking.payment_status === 'validated' ? (
@@ -286,14 +288,14 @@ export function BookingsTable({
               {canCharge(booking) && onChargeCustomer && (
                 <button
                   onClick={() => onChargeCustomer(booking)}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
                 >
-                  💳 Charge Customer
+                  💳 Charge
                 </button>
               )}
               {booking.payment_status === 'paid' && (
-                <span className="inline-flex items-center px-3 py-2 text-sm text-green-600 font-medium bg-green-50 rounded-lg">
-                  ✅ Paid
+                <span className="inline-flex items-center px-2 py-1 text-xs text-green-600 font-medium bg-green-50 rounded-md">
+                  ✅
                 </span>
               )}
               <button

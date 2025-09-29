@@ -46,6 +46,11 @@ class ToasterService {
 
 export const toaster = new ToasterService();
 
+// Make toaster available globally for components that need it
+if (typeof window !== 'undefined') {
+  (window as any).toaster = toaster;
+}
+
 export function Toaster() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 

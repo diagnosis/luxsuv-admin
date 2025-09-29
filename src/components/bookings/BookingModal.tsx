@@ -107,24 +107,62 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
           {/* Quick Status Actions */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Quick Status Update
+              Booking Status
             </label>
-            <div className="flex flex-wrap gap-2">
-              {['pending', 'approved', 'completed', 'cancelled'].map((status) => (
+            <div className="space-y-3">
+              {/* Payment Status Warning */}
+              {booking.payment_status !== 'validated' && formData.status === 'approved' && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <div className="flex items-start">
+                    <div className="text-amber-600 text-sm">
+                      <strong>⚠️ Payment Not Validated:</strong> Cannot approve booking without validated payment method. Customer needs to complete card validation first.
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Current Payment Status Display */}
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-sm text-gray-700 mb-2">Payment Status:</div>
+                {booking.payment_status === 'validated' ? (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    💳 Card Validated - Ready for Approval
+                  </span>
+                ) : booking.payment_status === 'paid' ? (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    ✅ Payment Complete
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
+                    ⏳ Payment Validation Pending
+                  </span>
+                )}
+              </div>
+              
+              {/* Status Update Buttons */}
+              <div className="flex flex-wrap gap-2">
+                {['pending', 'approved', 'completed', 'cancelled'].map((status) => {
+                  const canApprove = status !== 'approved' || booking.payment_status === 'validated';
+                  return (
                 <button
                   key={status}
                   type="button"
                   onClick={() => handleStatusChange(status)}
-                  disabled={statusMutation.isPending}
+                  disabled={statusMutation.isPending || !canApprove}
                   className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                     booking.status === status
                       ? 'bg-purple-100 text-purple-700 border-purple-200'
-                      : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
-                  }`}
+                      : canApprove 
+                        ? 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
+                        : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
+                  } ${!canApprove ? 'opacity-50' : ''}`}
+                  title={!canApprove ? 'Payment must be validated before approval' : ''}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </button>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
