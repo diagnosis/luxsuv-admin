@@ -7,6 +7,15 @@ import { BookingStatusBadge } from '../bookings/BookingStatusBadge';
 import { formatRelativeTime } from '../../lib/utils';
 import { notificationStore } from '../../lib/notificationStore';
 
+interface Notification {
+  id: string;
+  type: 'new_booking' | 'ready_to_charge' | 'status_change';
+  bookingId: string;
+  booking: any;
+  read: boolean;
+  created_at: string;
+}
+
 interface NotificationDropdownProps {
   onClose: () => void;
 }

@@ -70,7 +70,7 @@ class NotificationStore {
       };
     }).filter((notification: any) => {
       // Only show recent notifications or urgent ones
-      const bookingDate = new Date(booking.created_at);
+      const bookingDate = new Date(notification.booking.created_at);
       const hoursDiff = (now.getTime() - bookingDate.getTime()) / (1000 * 60 * 60);
       return hoursDiff <= 24 || notification.type === 'ready_to_charge'; // Show recent or urgent
     });
