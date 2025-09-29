@@ -273,6 +273,8 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
           </div>
 
           <p className="text-xs text-gray-500 text-center pt-2">
+          </p>
+        </div>
       </div>
     </div>
   );
