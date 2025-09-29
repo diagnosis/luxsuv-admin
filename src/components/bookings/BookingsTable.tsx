@@ -158,26 +158,35 @@ export function BookingsTable({
                     {formatDateTime(booking.scheduled_at)}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-2 flex-wrap">
                   <BookingStatusBadge status={booking.status} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex flex-col gap-1">
-                    <BookingStatusBadge 
-                      status={booking.payment_status || 'pending'} 
-                      type="payment"
-                    />
-                    {booking.payment_status === 'validated' && (
-                      <span className="text-xs text-blue-600 font-medium">
-                        💳 Card Validated - Ready to Charge
+                  {booking.payment_status === 'validated' ? (
+                    <div className="space-y-1">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                        Validated
                       </span>
-                    )}
-                    {booking.paid_at && (
-                      <span className="text-xs text-gray-500">
-                        Paid: {formatDateTime(booking.paid_at)}
+                      <div className="text-xs text-blue-600 font-medium">
+                        💳 Card Ready to Charge
+                      </div>
+                    </div>
+                  ) : booking.payment_status === 'paid' ? (
+                    <div className="space-y-1">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                        Paid
                       </span>
-                    )}
-                  </div>
+                      {booking.paid_at && (
+                        <div className="text-xs text-gray-500">
+                          {formatDateTime(booking.paid_at)}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                      {booking.payment_status || 'Pending'}
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {formatAmountBreakdown(booking)}
@@ -190,15 +199,14 @@ export function BookingsTable({
                     {canCharge(booking) && onChargeCustomer && (
                       <button
                         onClick={() => onChargeCustomer(booking)}
-                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors shadow-sm"
-                        title="Charge customer"
+                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
                       >
-                        💳 Charge Customer
+                        💳 Charge
                       </button>
                     )}
                     {booking.payment_status === 'paid' && (
-                      <span className="inline-flex items-center px-3 py-2 text-sm text-green-600 font-medium bg-green-50 rounded-lg">
-                        ✅ Payment Complete
+                      <span className="inline-flex items-center px-3 py-1.5 text-xs text-green-600 font-medium bg-green-50 rounded-md">
+                        ✅ Paid
                       </span>
                     )}
                     <button
@@ -260,16 +268,17 @@ export function BookingsTable({
               )}
               <div className="text-xs text-gray-500">
                 {formatDateTime(booking.scheduled_at)} • {booking.passenger_count} passengers • {booking.luggage_count} bags
-              </div>
-              <div className="text-xs text-gray-600">
-                Total: {booking.base_amount || booking.service_fee 
-                  ? `$${(((booking.base_amount || 0) + (booking.service_fee || 0)) / 100).toFixed(2)}`
-                  : 'N/A'
-                } {(booking.base_amount && booking.service_fee) && (
-                  <span className="text-gray-400">
-                    (Base: ${(booking.base_amount / 100).toFixed(2)}, Fee: ${(booking.service_fee / 100).toFixed(2)})
-                  </span>
-                )}
+                  {booking.payment_status === 'validated' && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                      💳 Validated
+                    </span>
+                  )}
+                  {booking.payment_status === 'paid' && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                      ✅ Paid
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
