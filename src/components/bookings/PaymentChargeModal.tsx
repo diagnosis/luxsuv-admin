@@ -275,7 +275,6 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
           <p className="text-xs text-gray-500 text-center pt-2">
             Payment processed securely via Stripe
           </p>
-          </p>
         </div>
       </div>
     </div>
