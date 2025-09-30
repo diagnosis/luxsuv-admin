@@ -47,6 +47,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = async (email: string, password: string) => {
+    // Clear any existing token first
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    
     const response = await fetch('http://localhost:8080/api/v1/admin/login', {
       method: 'POST',
       headers: {
@@ -62,6 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const data = await response.json();
     
+    // Set new token and user data
     localStorage.setItem('adminToken', data.token);
     localStorage.setItem('adminUser', JSON.stringify(data.user));
     
@@ -70,6 +75,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
+    // Clear all stored auth data
+    localStorage.clear(); // Clear all localStorage to avoid any cached data
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
     setToken(null);

@@ -5,11 +5,9 @@ interface ApiResponse<T = any> {
 
 export class ApiClient {
   private baseUrl: string;
-  private token: string | null;
 
-  constructor(baseUrl = 'http://localhost:8080/api/v1', token: string | null = null) {
+  constructor(baseUrl = 'http://localhost:8080/api/v1') {
     this.baseUrl = baseUrl;
-    this.token = token || localStorage.getItem('adminToken');
   }
 
   private async request<T>(
@@ -22,8 +20,9 @@ export class ApiClient {
       ...options.headers,
     };
 
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
 
     const response = await fetch(url, {
