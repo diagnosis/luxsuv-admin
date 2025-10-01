@@ -35,7 +35,7 @@ interface BookingsTableProps {
   onEdit: (booking: Booking) => void;
   onDelete: (booking: Booking, type: 'soft' | 'hard') => void;
   onChargeCustomer?: (booking: Booking) => void;
-  onStatusChange?: (bookingId: string, status: string) => void;
+  onStatusChange?: (bookingId: string, status: string, bookingName?: string) => void;
 }
 
 export function BookingsTable({
@@ -184,7 +184,7 @@ export function BookingsTable({
                         )}
                         {booking.status !== 'cancelled' && (
                           <button
-                            onClick={() => onStatusChange(booking.id, 'cancelled')}
+                            onClick={() => onStatusChange(booking.id, 'cancelled', booking.name)}
                             className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                             title="Cancel"
                           >

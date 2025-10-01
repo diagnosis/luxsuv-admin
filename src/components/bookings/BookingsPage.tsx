@@ -9,6 +9,7 @@ import { BookingsFilters } from './BookingsFilters';
 import { BookingModal } from './BookingModal';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { PaymentChargeModal } from './PaymentChargeModal';
+import { CancelConfirmModal } from './CancelConfirmModal';
 
 export function BookingsPage() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export function BookingsPage() {
   const [showChargeModal, setShowChargeModal] = useState(false);
   const [deleteBooking, setDeleteBooking] = useState<{ id: string; name: string } | null>(null);
   const [deleteType, setDeleteType] = useState<'soft' | 'hard'>('soft');
+  const [cancelBooking, setCancelBooking] = useState<{ id: string; name: string } | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -82,8 +84,18 @@ export function BookingsPage() {
     },
   });
 
-  const handleStatusChange = (bookingId: string, status: string) => {
-    statusMutation.mutate({ bookingId, status });
+  const handleStatusChange = (bookingId: string, status: string, bookingName?: string) => {
+    if (status === 'cancelled' && bookingName) {
+      setCancelBooking({ id: bookingId, name: bookingName });
+    } else {
+      statusMutation.mutate({ bookingId, status });
+    }
+  };
+
+  const confirmCancel = () => {
+    if (!cancelBooking) return;
+    statusMutation.mutate({ bookingId: cancelBooking.id, status: 'cancelled' });
+    setCancelBooking(null);
   };
   const confirmDelete = async () => {
     if (!deleteBooking) return;
@@ -169,6 +181,14 @@ export function BookingsPage() {
             deleteType={deleteType}
             onConfirm={confirmDelete}
             onCancel={() => setDeleteBooking(null)}
+          />
+        )}
+
+        {cancelBooking && (
+          <CancelConfirmModal
+            bookingName={cancelBooking.name}
+            onConfirm={confirmCancel}
+            onCancel={() => setCancelBooking(null)}
           />
         )}
       </div>
