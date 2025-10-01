@@ -50,11 +50,16 @@ export function BookingsTable({
   onChargeCustomer,
   onStatusChange
 }: BookingsTableProps) {
-  const isNewBooking = (createdAt: string) => {
+  const isNewBooking = (booking: Booking) => {
     const now = new Date();
-    const created = new Date(createdAt);
+    const created = new Date(booking.created_at);
     const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
-    return hoursDiff <= 24;
+
+    return (
+      hoursDiff <= 24 &&
+      booking.status === 'pending' &&
+      !booking.viewed_at
+    );
   };
 
   const canCharge = (booking: Booking) => {
@@ -145,12 +150,10 @@ export function BookingsTable({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {bookings.map((booking) => (
-              <tr key={booking.id} className={`hover:bg-gray-50 transition-colors ${
-                !booking.viewed_at && isNewBooking(booking.created_at) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''
-              }`}>
+              <tr key={booking.id} className={`hover:bg-gray-50 transition-colors ${isNewBooking(booking) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''}`}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-start gap-2">
-                    {!booking.viewed_at && isNewBooking(booking.created_at) && (
+                    {isNewBooking(booking) && (
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white mt-0.5">
                         NEW
                       </span>
@@ -264,10 +267,10 @@ export function BookingsTable({
       {/* Mobile Cards */}
       <div className="lg:hidden divide-y divide-gray-200">
         {bookings.map((booking) => (
-          <div key={booking.id} className={`p-4 ${!booking.viewed_at && isNewBooking(booking.created_at) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''}`}>
+          <div key={booking.id} className={`p-4 ${isNewBooking(booking) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''}`}>
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-start gap-2">
-                {!booking.viewed_at && isNewBooking(booking.created_at) && (
+                {isNewBooking(booking) && (
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white mt-0.5">
                     NEW
                   </span>
