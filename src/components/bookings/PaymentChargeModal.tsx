@@ -18,8 +18,24 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
   const queryClient = useQueryClient();
 
   const chargeMutation = useMutation({
-    mutationFn: (chargeData: { amount: number; currency?: string; notes?: string }) => 
-      api.chargeCustomer(booking.id, chargeData),
+    mutationFn: async (chargeData: { amount: number; currency?: string; notes?: string }) => {
+      const result = await api.chargeCustomer(booking.id, chargeData);
+
+      // If the API doesn't update booking amount automatically, update it manually
+      if (result.status === 'succeeded') {
+        try {
+          // Update booking with the charged amount
+          await api.updateBooking(booking.id, {
+            base_amount: Math.round(chargeData.amount * 100), // Convert to cents
+            service_fee: 0,
+          });
+        } catch (error) {
+          console.warn('Failed to update booking amount:', error);
+        }
+      }
+
+      return result;
+    },
     onSuccess: (result) => {
       if (result.requires_action) {
         // Handle 3D Secure authentication
@@ -39,9 +55,8 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
 
   const handleCharge = () => {
     const chargeAmount = parseFloat(amount);
-    
+
     if (isNaN(chargeAmount) || chargeAmount <= 0) {
-      setError('Please enter a valid amount greater than $0.00');
       return;
     }
 
