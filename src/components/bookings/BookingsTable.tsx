@@ -57,8 +57,7 @@ export function BookingsTable({
 
     return (
       hoursDiff <= 24 &&
-      booking.status === 'pending' &&
-      !booking.viewed_at
+      booking.status === 'pending'
     );
   };
 

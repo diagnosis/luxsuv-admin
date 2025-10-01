@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 import { api } from '../../lib/api';
-import { bookingMetadata } from '../../lib/bookingMetadata';
 import { toaster } from '../ui/Toaster';
 import { Layout } from '../layout/Layout';
 import { BookingsTable } from './BookingsTable';
@@ -26,8 +25,6 @@ export function BookingsPage() {
 
   const queryClient = useQueryClient();
 
-  const [bookingsWithMetadata, setBookingsWithMetadata] = useState<any[]>([]);
-
   const { data, isLoading, error } = useQuery({
     queryKey: ['bookings', { page, status, q }],
     queryFn: () => api.getBookings({
@@ -37,30 +34,6 @@ export function BookingsPage() {
       ...(q && { q })
     }),
   });
-
-  useEffect(() => {
-    async function mergeMetadata() {
-      if (!data?.bookings) {
-        setBookingsWithMetadata([]);
-        return;
-      }
-
-      const bookingIds = data.bookings.map((b: any) => b.id);
-      const metadata = await bookingMetadata.getMetadata(bookingIds);
-
-      const merged = data.bookings.map((booking: any) => {
-        const meta = metadata.get(booking.id);
-        return {
-          ...booking,
-          viewed_at: meta?.viewed_at || null,
-        };
-      });
-
-      setBookingsWithMetadata(merged);
-    }
-
-    mergeMetadata();
-  }, [data]);
 
   const handleFilterChange = (newFilters: any) => {
     navigate({
@@ -76,8 +49,7 @@ export function BookingsPage() {
     });
   };
 
-  const handleEditBooking = async (booking: any) => {
-    await bookingMetadata.markAsViewed(booking.id);
+  const handleEditBooking = (booking: any) => {
     setSelectedBooking(booking);
     setShowModal(true);
   };
@@ -112,8 +84,7 @@ export function BookingsPage() {
     },
   });
 
-  const handleStatusChange = async (bookingId: string, status: string, bookingName?: string) => {
-    await bookingMetadata.markAsViewed(bookingId);
+  const handleStatusChange = (bookingId: string, status: string, bookingName?: string) => {
     if (status === 'cancelled' && bookingName) {
       setCancelBooking({ id: bookingId, name: bookingName });
     } else {
@@ -159,7 +130,7 @@ export function BookingsPage() {
         />
 
         <BookingsTable
-          bookings={bookingsWithMetadata}
+          bookings={data?.bookings || []}
           isLoading={isLoading}
           error={error}
           pagination={{
