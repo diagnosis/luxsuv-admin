@@ -98,7 +98,7 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="text-xs text-purple-600 hover:text-purple-700 font-medium transition-colors"
+              className="text-xs text-blue-600 hover:text-blue-700 font-medium transition-colors"
             >
               Mark all read
             </button>
@@ -122,19 +122,19 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
               search={{ q: notification.booking.email }}
               onClick={() => handleNotificationClick(notification)}
               className={`block px-4 py-3 hover:bg-gray-50 transition-colors border-l-4 ${
-                notification.read 
-                  ? 'border-transparent' 
-                  : 'border-purple-500 bg-purple-50/30'
+                notification.read
+                  ? 'border-transparent'
+                  : 'border-blue-500 bg-blue-50/30'
               }`}
             >
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   {notification.type === 'new_booking' ? (
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      notification.read ? 'bg-gray-100' : 'bg-purple-100'
+                      notification.read ? 'bg-gray-100' : 'bg-blue-100'
                     }`}>
                       <FiClock className={`h-4 w-4 ${
-                        notification.read ? 'text-gray-600' : 'text-purple-600'
+                        notification.read ? 'text-gray-600' : 'text-blue-600'
                       }`} />
                     </div>
                   ) : (
@@ -163,7 +163,7 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
                       {formatRelativeTime(notification.created_at)}
                     </p>
                     {!notification.read && (
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export function NotificationDropdown({ onClose }: NotificationDropdownProps) {
             to="/bookings"
             search={{ status: '' }}
             onClick={onClose}
-            className="block text-center text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+            className="block text-center text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             View all bookings
           </Link>

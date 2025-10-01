@@ -58,13 +58,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className={clsx(
                     'flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
                     isActive
-                      ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-500'
+                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                   )}
                 >
                   <Icon className={clsx(
                     'mr-3 h-5 w-5',
-                    isActive ? 'text-purple-500' : 'text-gray-400'
+                    isActive ? 'text-blue-500' : 'text-gray-400'
                   )} />
                   {item.name}
                 </Link>

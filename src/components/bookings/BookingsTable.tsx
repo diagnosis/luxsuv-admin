@@ -1,5 +1,4 @@
-import { FiEdit2, FiTrash2, FiEye, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { FiCalendar } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiEye, FiChevronLeft, FiChevronRight, FiCalendar, FiCheck, FiClock, FiX, FiCreditCard } from 'react-icons/fi';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { formatDateTime } from '../../lib/utils';
 
@@ -36,17 +35,19 @@ interface BookingsTableProps {
   onEdit: (booking: Booking) => void;
   onDelete: (booking: Booking, type: 'soft' | 'hard') => void;
   onChargeCustomer?: (booking: Booking) => void;
+  onStatusChange?: (bookingId: string, status: string) => void;
 }
 
-export function BookingsTable({ 
-  bookings, 
-  isLoading, 
-  error, 
+export function BookingsTable({
+  bookings,
+  isLoading,
+  error,
   pagination,
   onPageChange,
   onEdit,
   onDelete,
-  onChargeCustomer
+  onChargeCustomer,
+  onStatusChange
 }: BookingsTableProps) {
   const canCharge = (booking: Booking) => {
     return booking.status === 'completed' && 
@@ -161,6 +162,37 @@ export function BookingsTable({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-2 flex-wrap">
                     <BookingStatusBadge status={booking.status} />
+                    {onStatusChange && (
+                      <div className="flex gap-1">
+                        {booking.status !== 'pending' && (
+                          <button
+                            onClick={() => onStatusChange(booking.id, 'pending')}
+                            className="p-1 text-amber-600 hover:bg-amber-50 rounded transition-colors"
+                            title="Set to Pending"
+                          >
+                            <FiClock className="h-3 w-3" />
+                          </button>
+                        )}
+                        {booking.status !== 'approved' && booking.payment_status === 'validated' && (
+                          <button
+                            onClick={() => onStatusChange(booking.id, 'approved')}
+                            className="p-1 text-green-600 hover:bg-green-50 rounded transition-colors"
+                            title="Approve"
+                          >
+                            <FiCheck className="h-3 w-3" />
+                          </button>
+                        )}
+                        {booking.status !== 'cancelled' && (
+                          <button
+                            onClick={() => onStatusChange(booking.id, 'cancelled')}
+                            className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Cancel"
+                          >
+                            <FiX className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -183,19 +215,21 @@ export function BookingsTable({
                     {canCharge(booking) && onChargeCustomer && (
                       <button
                         onClick={() => onChargeCustomer(booking)}
-                        className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700"
+                        className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700 flex items-center gap-1"
                       >
-                        💳 Charge
+                        <FiCreditCard className="h-3 w-3" />
+                        Charge
                       </button>
                     )}
                     {booking.payment_status === 'paid' && (
-                      <span className="text-green-600 font-medium text-sm">
-                        ✅ Payment Complete
+                      <span className="text-green-600 font-medium text-sm flex items-center gap-1">
+                        <FiCheck className="h-3 w-3" />
+                        Paid
                       </span>
                     )}
                     <button
                       onClick={() => onEdit(booking)}
-                      className="text-purple-600 hover:text-purple-900 p-1 rounded hover:bg-purple-50 transition-colors"
+                      className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors"
                       title="Edit booking"
                     >
                       <FiEdit2 className="h-4 w-4" />
@@ -257,19 +291,21 @@ export function BookingsTable({
               {canCharge(booking) && onChargeCustomer && (
                 <button
                   onClick={() => onChargeCustomer(booking)}
-                  className="bg-green-600 text-white px-3 py-1.5 text-xs font-medium rounded hover:bg-green-700"
+                  className="bg-green-600 text-white px-3 py-1.5 text-xs font-medium rounded hover:bg-green-700 flex items-center gap-1"
                 >
-                  💳 Charge
+                  <FiCreditCard className="h-3 w-3" />
+                  Charge
                 </button>
               )}
               {booking.payment_status === 'paid' && (
-                <span className="text-green-600 font-medium text-xs">
-                  ✅ Payment Complete
+                <span className="text-green-600 font-medium text-xs flex items-center gap-1">
+                  <FiCheck className="h-3 w-3" />
+                  Paid
                 </span>
               )}
               <button
                 onClick={() => onEdit(booking)}
-                className="text-purple-600 hover:text-purple-900 p-2 rounded hover:bg-purple-50 transition-colors"
+                className="text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50 transition-colors"
               >
                 <FiEdit2 className="h-4 w-4" />
               </button>

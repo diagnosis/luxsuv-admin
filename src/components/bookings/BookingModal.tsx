@@ -151,8 +151,8 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                   disabled={statusMutation.isPending || !canApprove}
                   className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                     booking.status === status
-                      ? 'bg-purple-100 text-purple-700 border-purple-200'
-                      : canApprove 
+                      ? 'bg-blue-100 text-blue-700 border-blue-200'
+                      : canApprove
                         ? 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
                         : 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
                   } ${!canApprove ? 'opacity-50' : ''}`}
@@ -179,7 +179,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -195,7 +195,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -210,7 +210,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 value={formData.phone}
                 onChange={handleChange}
                 disabled={timeRestricted}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
           </div>
@@ -244,7 +244,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -260,7 +260,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
           </div>
@@ -280,7 +280,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 onChange={handleChange}
                 disabled={timeRestricted}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -297,7 +297,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 value={formData.luggage_count}
                 onChange={handleChange}
                 disabled={timeRestricted}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               />
             </div>
 
@@ -311,7 +311,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 value={formData.trip_type}
                 onChange={handleChange}
                 disabled={timeRestricted}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
               >
                 <option value="per_ride">Per Ride</option>
                 <option value="hourly">Hourly</option>
@@ -351,7 +351,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 value={formData.base_amount || ''}
                 onChange={handleChange}
                 disabled={timeRestricted}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                 placeholder="0.00"
               />
             </div>
@@ -369,7 +369,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
                 value={formData.service_fee || ''}
                 onChange={handleChange}
                 disabled={timeRestricted}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                 placeholder="0.00"
               />
             </div>
@@ -398,7 +398,7 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
             <button
               type="submit"
               disabled={updateMutation.isPending || timeRestricted}
-              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <FiSave className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}

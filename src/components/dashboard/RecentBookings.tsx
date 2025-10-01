@@ -25,7 +25,7 @@ export function RecentBookings({ bookings }: RecentBookingsProps) {
           <h2 className="text-lg font-semibold text-gray-900">Recent Bookings</h2>
           <Link
             to="/bookings"
-            className="text-purple-600 hover:text-purple-700 text-sm font-medium transition-colors"
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
           >
             View All
           </Link>

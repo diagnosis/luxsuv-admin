@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 import { api } from '../../lib/api';
+import { toaster } from '../ui/Toaster';
 import { Layout } from '../layout/Layout';
 import { BookingsTable } from './BookingsTable';
 import { BookingsFilters } from './BookingsFilters';
@@ -60,6 +61,30 @@ export function BookingsPage() {
     setSelectedBooking(booking);
     setShowChargeModal(true);
   };
+
+  const statusMutation = useMutation({
+    mutationFn: ({ bookingId, status }: { bookingId: string; status: string }) =>
+      api.updateBookingStatus(bookingId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toaster.toast({
+        type: 'success',
+        title: 'Status updated',
+        description: 'Booking status has been updated successfully',
+      });
+    },
+    onError: (error: any) => {
+      toaster.toast({
+        type: 'error',
+        title: 'Update failed',
+        description: error.message || 'Failed to update booking status',
+      });
+    },
+  });
+
+  const handleStatusChange = (bookingId: string, status: string) => {
+    statusMutation.mutate({ bookingId, status });
+  };
   const confirmDelete = async () => {
     if (!deleteBooking) return;
 
@@ -106,6 +131,7 @@ export function BookingsPage() {
           onEdit={handleEditBooking}
           onDelete={handleDeleteBooking}
           onChargeCustomer={handleChargeCustomer}
+          onStatusChange={handleStatusChange}
         />
 
         {showModal && (

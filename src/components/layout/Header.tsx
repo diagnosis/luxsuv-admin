@@ -32,7 +32,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           </button>
           
           <div className="flex items-center ml-4 lg:ml-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">L</span>
             </div>
             <div className="ml-3">
@@ -46,7 +46,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <FiBell className="h-5 w-5" />
               <NotificationBadge />
@@ -61,7 +61,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <div className="relative">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center space-x-3 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 p-2 hover:bg-gray-50 transition-colors"
+              className="flex items-center space-x-3 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 p-2 hover:bg-gray-50 transition-colors"
             >
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <FiUser className="h-4 w-4 text-gray-600" />

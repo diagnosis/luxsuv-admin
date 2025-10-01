@@ -33,7 +33,7 @@ const paymentStatusConfig = {
   },
   processing: {
     label: 'Processing',
-    className: 'bg-purple-50 text-purple-700 border-purple-200',
+    className: 'bg-cyan-50 text-cyan-700 border-cyan-200',
   },
   paid: {
     label: 'Paid',
