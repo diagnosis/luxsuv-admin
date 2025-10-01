@@ -29,7 +29,14 @@ export function BookingModal({ booking, onClose, onSuccess }: BookingModalProps)
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => api.updateBooking(booking.id, data),
+    mutationFn: async (data: any) => {
+      // Mark booking as viewed when admin edits it
+      const updateData = {
+        ...data,
+        viewed_at: new Date().toISOString(),
+      };
+      return api.updateBooking(booking.id, updateData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       onSuccess();

@@ -19,6 +19,7 @@ interface Booking {
   service_fee?: number;
   paid_at?: string;
   created_at: string;
+  viewed_at?: string;
 }
 
 interface BookingsTableProps {
@@ -49,8 +50,15 @@ export function BookingsTable({
   onChargeCustomer,
   onStatusChange
 }: BookingsTableProps) {
+  const isNewBooking = (createdAt: string) => {
+    const now = new Date();
+    const created = new Date(createdAt);
+    const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+    return hoursDiff <= 24;
+  };
+
   const canCharge = (booking: Booking) => {
-    return booking.status === 'completed' && 
+    return booking.status === 'completed' &&
            (booking.payment_status === 'validated' || !booking.payment_status);
   };
 
@@ -137,12 +145,21 @@ export function BookingsTable({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {bookings.map((booking) => (
-              <tr key={booking.id} className="hover:bg-gray-50">
+              <tr key={booking.id} className={`hover:bg-gray-50 transition-colors ${
+                !booking.viewed_at && isNewBooking(booking.created_at) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''
+              }`}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">{booking.name}</div>
-                    <div className="text-sm text-gray-500">{booking.email}</div>
-                    <div className="text-xs text-gray-400">{booking.phone}</div>
+                  <div className="flex items-start gap-2">
+                    {!booking.viewed_at && isNewBooking(booking.created_at) && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white mt-0.5">
+                        NEW
+                      </span>
+                    )}
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{booking.name}</div>
+                      <div className="text-sm text-gray-500">{booking.email}</div>
+                      <div className="text-xs text-gray-400">{booking.phone}</div>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -247,11 +264,18 @@ export function BookingsTable({
       {/* Mobile Cards */}
       <div className="lg:hidden divide-y divide-gray-200">
         {bookings.map((booking) => (
-          <div key={booking.id} className="p-4">
+          <div key={booking.id} className={`p-4 ${!booking.viewed_at && isNewBooking(booking.created_at) ? 'bg-amber-50 border-l-4 border-l-amber-500' : ''}`}>
             <div className="flex justify-between items-start mb-3">
-              <div>
-                <h3 className="font-medium text-gray-900">{booking.name}</h3>
-                <p className="text-sm text-gray-600">{booking.email}</p>
+              <div className="flex items-start gap-2">
+                {!booking.viewed_at && isNewBooking(booking.created_at) && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white mt-0.5">
+                    NEW
+                  </span>
+                )}
+                <div>
+                  <h3 className="font-medium text-gray-900">{booking.name}</h3>
+                  <p className="text-sm text-gray-600">{booking.email}</p>
+                </div>
               </div>
             </div>
             

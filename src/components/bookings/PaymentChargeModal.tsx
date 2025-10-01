@@ -19,14 +19,14 @@ export function PaymentChargeModal({ booking, onClose, onComplete }: PaymentChar
 
   const chargeMutation = useMutation({
     mutationFn: async (chargeData: { amount: number; currency?: string; notes?: string }) => {
+      // First charge the customer
       const result = await api.chargeCustomer(booking.id, chargeData);
 
-      // If the API doesn't update booking amount automatically, update it manually
+      // If charge succeeded, update the booking with the amount
       if (result.status === 'succeeded') {
         try {
-          // Update booking with the charged amount
           await api.updateBooking(booking.id, {
-            base_amount: Math.round(chargeData.amount * 100), // Convert to cents
+            base_amount: Math.round(chargeData.amount * 100),
             service_fee: 0,
           });
         } catch (error) {
